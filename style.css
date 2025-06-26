@@ -1,0 +1,580 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #8B4513, #D2691E, #F4A460);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    color: #8B4513;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.header p {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.input-section {
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Allow wrapping on small screens */
+    flex-wrap: wrap;
+    justify-content: center; /* Center items when wrapped */
+}
+
+.input-inline label {
+    margin-bottom: 0;
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #8B4513;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.input-inline input[type="number"] {
+    max-width: 100px;
+    /* Adjust for mobile if needed */
+    flex-grow: 1; /* Allow input to grow */
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #8B4513;
+}
+
+.recipe-info {
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.recipe-info h3 {
+    color: #8B4513;
+    margin-bottom: 15px;
+}
+
+.recipe-steps {
+    list-style: none;
+}
+
+.recipe-steps li {
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.recipe-steps li:before {
+    content: "☕";
+    position: absolute;
+    left: 0;
+}
+
+.controls {
+    text-align: center;
+    margin-bottom: 30px;
+    display: flex;
+    gap: 20px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+    flex-wrap: wrap; /* ให้ปุ่มขึ้นบรรทัดใหม่ได้ถ้าหน้าจอเล็ก */
+    justify-content: center; /* จัดกึ่งกลางปุ่ม */
+}
+
+.btn {
+    background: linear-gradient(45deg, #8B4513, #D2691E);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex: 1 1 auto; /* Allow buttons to grow/shrink based on space */
+    min-width: 120px; /* Ensure buttons don't get too small */
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(139, 69, 19, 0.3);
+}
+
+.btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.timer-display {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.timer {
+    font-size: 3em;
+    font-weight: bold;
+    color: #8B4513;
+    margin-bottom: 10px;
+    font-family: 'Courier New', monospace;
+}
+
+.current-step {
+    background: linear-gradient(45deg, #FF6B6B, #FFE66D);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.current-step h3 {
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 10px;
+}
+
+.current-step p {
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #eee;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(45deg, #8B4513, #D2691E);
+    width: 0%;
+    transition: width 0.3s;
+}
+
+.completed {
+    background: #4CAF50 !important;
+    color: white;
+}
+
+.audio-controls {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.audio-controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volume-control label {
+    margin: 0;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.volume-control input[type="range"] {
+    width: 80px;
+}
+
+.celebration {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    border-radius: 15px;
+    color: white;
+    animation: celebrate 1s ease-in-out;
+}
+
+@keyframes celebrate {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.celebration h2 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.celebration p {
+    font-size: 1.2em;
+}
+
+.timeline-section {
+    margin: 30px 0;
+}
+
+.timeline-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-table th,
+.timeline-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.timeline-table th {
+    background: linear-gradient(45deg, #8B4513, #D2691E);
+    color: white;
+    font-weight: 600;
+}
+
+.timeline-table tr:hover {
+    background: #f5f5f5;
+}
+
+.timeline-table .time-col {
+    font-weight: bold;
+    color: #8B4513;
+}
+
+.timeline-table .action-col {
+    color: #333;
+}
+
+.timeline-table .water-col {
+    color: #2196F3;
+    font-weight: 600;
+}
+
+.timeline-table .valve-col {
+    font-weight: 600;
+}
+
+.valve-open {
+    color: #4CAF50;
+}
+
+.valve-close {
+    color: #f44336;
+}
+
+.current-timeline-step {
+    background: #FFE082 !important;
+    font-weight: bold;
+}
+
+.completed-timeline-step {
+    background: #C8E6C9 !important;
+    opacity: 0.8;
+}
+
+.audio-test {
+    margin-top: 10px;
+}
+
+.audio-test button {
+    background: #2196F3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.countdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.countdown-content {
+    background: white;
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.countdown-number {
+    font-size: 8em;
+    font-weight: bold;
+    color: #8B4513;
+    margin: 20px 0;
+    font-family: 'Courier New', monospace;
+    animation: countdownPulse 1s ease-in-out;
+}
+
+@keyframes countdownPulse {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.countdown-text {
+    font-size: 1.5em;
+    color: #8B4513;
+    margin-bottom: 20px;
+}
+
+.countdown-go {
+    font-size: 6em;
+    font-weight: bold;
+    color: #4CAF50;
+    animation: countdownGo 1s ease-in-out;
+}
+
+@keyframes countdownGo {
+    0% {
+        transform: scale(0.3) rotate(-10deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.3) rotate(5deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* Media Queries for Responsiveness */
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .header h1 {
+        font-size: 1.5em;
+    }
+
+    .header p {
+        font-size: 0.8em;
+    }
+
+    .input-inline {
+        flex-direction: column; /* Stack label and input vertically */
+        align-items: flex-start; /* Align text to the left */
+        gap: 5px;
+    }
+
+    .input-inline label {
+        width: 100%;
+        text-align: left;
+    }
+
+    .input-inline input[type="number"] {
+        max-width: 100%; /* Allow input to take full width */
+    }
+
+    .btn {
+        padding: 12px 20px;
+        font-size: 14px;
+        flex: 1 1 100%; /* Make buttons take full width */
+    }
+
+    .timer {
+        font-size: 2.5em;
+    }
+
+    .current-step {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .current-step h3 {
+        font-size: 1.1em;
+    }
+
+    .current-step p {
+        font-size: 1em;
+    }
+
+    .timeline-table th,
+    .timeline-table td {
+        padding: 8px;
+        font-size: 0.85em;
+    }
+
+    /* Adjust table columns for smaller screens */
+    .timeline-table th:nth-child(2),
+    .timeline-table td:nth-child(2) { /* Action column */
+        display: none; /* Hide action column on very small screens */
+    }
+
+    .timeline-table th:nth-child(4),
+    .timeline-table td:nth-child(4) { /* Valve column */
+        display: none; /* Hide valve column on very small screens */
+    }
+
+    .audio-controls-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .volume-control {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .countdown-content {
+        padding: 30px;
+    }
+
+    .countdown-number {
+        font-size: 6em;
+    }
+
+    .countdown-go {
+        font-size: 4em;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px to 768px) */
+@media only screen and (min-width: 601px) and (max-width: 768px) {
+    .container {
+        padding: 25px;
+    }
+
+    .header h1 {
+        font-size: 1.7em;
+    }
+
+    .btn {
+        padding: 14px 25px;
+        font-size: 15px;
+    }
+
+    .timer {
+        font-size: 2.8em;
+    }
+
+    .timeline-table th,
+    .timeline-table td {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+}
+
+/* Medium devices (landscape tablets, 769px to 992px) */
+@media only screen and (min-width: 769px) and (max-width: 992px) {
+    .container {
+        padding: 30px;
+    }
+}
+
+/* Large devices (laptops/desktops, 993px and up) - Current styles are largely for this already */
+@media only screen and (min-width: 993px) {
+    /* No specific changes needed, as base styles are optimized for larger screens */
+}
