@@ -506,18 +506,7 @@ input[type="number"]:focus {
         padding: 8px;
         font-size: 0.85em;
     }
-
-    /* Adjust table columns for smaller screens */
-    .timeline-table th:nth-child(2),
-    .timeline-table td:nth-child(2) { /* Action column */
-        display: none; /* Hide action column on very small screens */
-    }
-
-    .timeline-table th:nth-child(4),
-    .timeline-table td:nth-child(4) { /* Valve column */
-        display: none; /* Hide valve column on very small screens */
-    }
-
+    
     .audio-controls-row {
         flex-direction: column;
         gap: 10px;
