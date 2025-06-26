@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetsu Kasuya V2 Coffee Brewing Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #8B4513, #D2691E, #F4A460);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #8B4513;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-inline label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #8B4513;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-inline input[type="number"] {
+            max-width: 100px;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #8B4513;
+        }
+
+        .recipe-info {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .recipe-info h3 {
+            color: #8B4513;
+            margin-bottom: 15px;
+        }
+
+        .recipe-steps {
+            list-style: none;
+        }
+
+        .recipe-steps li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .recipe-steps li:before {
+            content: "☕";
+            position: absolute;
+            left: 0;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #8B4513, #D2691E);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 69, 19, 0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .timer-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timer {
+            font-size: 3em;
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .current-step {
+            background: linear-gradient(45deg, #FF6B6B, #FFE66D);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .current-step h3 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .current-step p {
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #8B4513, #D2691E);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .completed {
+            background: #4CAF50 !important;
+            color: white;
+        }
+
+        .audio-controls {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .audio-controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-control label {
+            margin: 0;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .volume-control input[type="range"] {
+            width: 80px;
+        }
+
+        .celebration {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            border-radius: 15px;
+            color: white;
+            animation: celebrate 1s ease-in-out;
+        }
+
+        @keyframes celebrate {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .celebration h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .celebration p {
+            font-size: 1.2em;
+        }
+
+        .timeline-section {
+            margin: 30px 0;
+        }
+
+        .timeline-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-table th,
+        .timeline-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .timeline-table th {
+            background: linear-gradient(45deg, #8B4513, #D2691E);
+            color: white;
+            font-weight: 600;
+        }
+
+        .timeline-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .timeline-table .time-col {
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        .timeline-table .action-col {
+            color: #333;
+        }
+
+        .timeline-table .water-col {
+            color: #2196F3;
+            font-weight: 600;
+        }
+
+        .timeline-table .valve-col {
+            font-weight: 600;
+        }
+
+        .valve-open {
+            color: #4CAF50;
+        }
+
+        .valve-close {
+            color: #f44336;
+        }
+
+        .current-timeline-step {
+            background: #FFE082 !important;
+            font-weight: bold;
+        }
+
+        .completed-timeline-step {
+            background: #C8E6C9 !important;
+            opacity: 0.8;
+        }
+
+        .audio-test {
+            margin-top: 10px;
+        }
+
+        .audio-test button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .countdown-content {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .countdown-number {
+            font-size: 8em;
+            font-weight: bold;
+            color: #8B4513;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            animation: countdownPulse 1s ease-in-out;
+        }
+
+        @keyframes countdownPulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .countdown-text {
+            font-size: 1.5em;
+            color: #8B4513;
+            margin-bottom: 20px;
+        }
+
+        .countdown-go {
+            font-size: 6em;
+            font-weight: bold;
+            color: #4CAF50;
+            animation: countdownGo 1s ease-in-out;
+        }
+
+        @keyframes countdownGo {
+            0% {
+                transform: scale(0.3) rotate(-10deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.3) rotate(5deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>☕ Tetsu Kasuya V2 Assistant</h1>
+            <p><a href="https://roastaroma.com/2025/01/tetsu-kasayas-evolved-hybrid-recipe-v2-super-hybrid-sneaky-recipe/"
+                target="_blank">
+                Super Hybrid Sneaky Recipe
+                </a> 
+            </p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <div class="input-inline">
+                    <label for="coffeeWeight">น้ำหนักเมล็ดกาแฟ (กรัม):</label>
+                    <input type="number" id="coffeeWeight" value="20" min="10" max="50" step="0.5">
+                </div>
+            </div>
+
+            <div class="recipe-info">
+                <h3>สูตร Tetsu Kasuya V2:</h3>
+                <ul class="recipe-steps">
+                    <li>Ratio: 1:15 (กาแฟ:น้ำ)</li>
+                    <li>อุณหภูมิน้ำ: 92-96°C</li>
+                    <li>เวลาชงรวม: 3:30 นาที</li>
+                    <li>การเทแบ่งเป็น 4 ครั้ง</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="timeline-section">
+            <h3 style="color: #8B4513; margin-bottom: 15px; text-align: center;">📋 Timeline การชง</h3>
+            <table class="timeline-table" id="timelineTable">
+                <thead>
+                    <tr>
+                        <th>เวลา</th>
+                        <th>การรินน้ำ</th>
+                        <th>ปริมาณน้ำ (g)</th>
+                        <th>สวิตช์</th>
+                    </tr>
+                </thead>
+                <tbody id="timelineBody">
+                    <!-- Timeline will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="timer-display">
+            <div class="timer" id="timer">00:00</div>
+        </div>
+
+        <div class="current-step" id="currentStep" style="display: none;">
+            <h3 id="stepTitle">รอเริ่มต้น</h3>
+            <p id="stepDescription">กดปุ่ม "เริ่มชง" เพื่อเริ่มต้น</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+
+        <div class="controls">
+            <button class="btn" id="startBtn">เริ่มชง</button>
+            <button class="btn" id="pauseBtn" disabled>หยุดชั่วคราว</button>
+            <button class="btn" id="resetBtn">รีเซ็ต</button>
+        </div>
+
+
+        <div class="celebration" id="celebration" style="display: none;">
+            <h2>🎉 เสร็จแล้ว! 🎉</h2>
+            <p>กาแฟของคุณพร้อมดื่มแล้ว</p>
+        </div>
+
+        <div class="audio-controls">
+            <div class="audio-controls-row">
+                <label>
+                    <input type="checkbox" id="soundEnabled" checked> เปิดเสียงแจ้งเตือน
+                </label>
+                <div class="volume-control">
+                    <label for="volumeSlider">ระดับเสียง:</label>
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.7">
+                </div>
+            </div>
+            <div class="audio-test">
+                <button id="testSoundBtn">ทดสอบเสียง</button>
+            </div>
+        </div>
+
+        <!-- Countdown Overlay -->
+        <div class="countdown-overlay" id="countdownOverlay" style="display: none;">
+            <div class="countdown-content">
+                <div class="countdown-number" id="countdownNumber">3</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function playTickSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            // Set oscillator type and frequency for a sharp, high-pitched sound
+            oscillator.type = 'sine'; // or 'square', 'sawtooth', 'triangle'
+            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime); // 1000 Hz
+
+            // Connect nodes and set up a brief envelope for the sound
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            // Define the sound's duration and fade-out
+            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime); // Initial volume
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1); // Fade out over 0.1 seconds
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1); // Stop after 0.1 seconds
+        }
+
+        class CoffeeBrewingAssistant {
+            constructor() {
+                this.isRunning = false;
+                this.isPaused = false;
+                this.currentStepIndex = 0;
+                this.elapsedTime = 0;
+                this.timer = null;
+                this.coffeeWeight = 15;
+                this.waterWeight = 0;
+                this.steps = [];
+
+                this.initializeElements();
+                this.setupEventListeners();
+                this.updateRecipe();
+            }
+
+            initializeElements() {
+                this.startBtn = document.getElementById('startBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.timerDisplay = document.getElementById('timer');
+                this.currentStepDiv = document.getElementById('currentStep');
+                this.stepTitle = document.getElementById('stepTitle');
+                this.stepDescription = document.getElementById('stepDescription');
+                this.progressFill = document.getElementById('progressFill');
+                this.coffeeWeightInput = document.getElementById('coffeeWeight');
+                this.soundEnabled = document.getElementById('soundEnabled');
+                this.volumeSlider = document.getElementById('volumeSlider');
+                this.celebration = document.getElementById('celebration');
+                this.testSoundBtn = document.getElementById('testSoundBtn');
+                this.timelineTable = document.getElementById('timelineTable');
+                this.timelineBody = document.getElementById('timelineBody');
+                this.countdownOverlay = document.getElementById('countdownOverlay');
+                this.countdownNumber = document.getElementById('countdownNumber');
+            }
+
+            setupEventListeners() {
+                this.startBtn.addEventListener('click', () => this.start());
+                this.pauseBtn.addEventListener('click', () => this.pause());
+                this.resetBtn.addEventListener('click', () => this.reset());
+                this.coffeeWeightInput.addEventListener('input', () => this.updateRecipe());
+                this.testSoundBtn.addEventListener('click', () => this.testSound());
+            }
+
+            updateRecipe() {
+                this.coffeeWeight = parseFloat(this.coffeeWeightInput.value) || 15;
+                this.waterWeight = Math.round(this.coffeeWeight * 15);
+
+                // Tetsu Kasuya V2 Recipe Steps
+                this.steps = [
+                    {
+                        time: 0,
+                        duration: 30,
+                        title: "Blooming",
+                        description: `รินน้ำร้อน ${Math.round(this.coffeeWeight * 2.5)} กรัม หรือประมาณ 2.5 เท่าของน้ำหนักกาแฟ`,
+                        water: Math.round(this.coffeeWeight * 2.5),
+                        valve: "ปิด"
+                    },
+                    {
+                        time: 40,
+                        duration: 30,
+                        title: "รินน้ำครั้งแรก",
+                        description: `เปิดสวิตช์ รินน้ำจนถึง ${Math.round(this.waterWeight * 0.4)} กรัม`,
+                        water: Math.round(this.waterWeight * 0.4),
+                        valve: "เปิด"
+                    },
+                    {
+                        time: 90,
+                        duration: 30,
+                        title: "รินน้ำที่สอง",
+                        description: `รินน้ำจนถึง ${Math.round(this.waterWeight * 0.668)} กรัม`,
+                        water: Math.round(this.waterWeight * 0.668),
+                        valve: "เปิด"
+                    },
+                    {
+                        time: 130,
+                        duration: 30,
+                        title: "รินน้ำที่สาม",
+                        description: `ปิดสวิตช์ รินน้ำร้อนประมาณ 70 ถึง 80 องศา จนถึง ${this.waterWeight} กรัม`,
+                        water: this.waterWeight,
+                        valve: "ปิด"
+                    },
+                    {
+                        time: 175,
+                        duration: 35,
+                        title: "จบขั้นตอนการชง",
+                        description: "เปิดสวิตช์ รอให้น้ำกาแฟหยดจนหมด หรือครบ 3 นาที 30 วินาที",
+                        water: 0,
+                        valve: "เปิด"
+                    }
+                ];
+
+                this.updateTimeline();
+            }
+
+            start() {
+                if (this.isPaused) {
+                    // Resume from pause
+                    this.isPaused = false;
+                    this.isRunning = true;
+                    this.startBtn.disabled = true;
+                    this.pauseBtn.disabled = false;
+
+                    this.timer = setInterval(() => {
+                        this.elapsedTime++;
+                        this.updateDisplay();
+                        this.checkSteps();
+                    }, 1000);
+                } else {
+                    // Start new brewing with countdown
+                    this.showCountdown();
+                }
+            }
+
+            showCountdown() {
+                this.countdownOverlay.style.display = 'flex';
+                let count = 5;
+                this.countdownNumber.textContent = count;
+                this.countdownNumber.className = 'countdown-number';
+
+                // Speak countdown start
+                // this.speak("เริ่มชงกาแฟใน 3", true);
+                playTickSound();
+
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    playTickSound();
+                    if (count > 0) {
+                        this.countdownNumber.textContent = count;
+                        this.countdownNumber.style.animation = 'none';
+                        setTimeout(() => {
+                            this.countdownNumber.style.animation = 'countdownPulse 1s ease-in-out';
+                        }, 20);
+                        // this.speak(count.toString(), true);
+                        
+                    } else {
+                        // Show "GO!" and start brewing
+                        this.countdownNumber.textContent = 'เริ่ม!';
+                        this.countdownNumber.className = 'countdown-go';
+                        // this.speak("เริ่ม!", true);
+                        playTickSound();
+
+                        setTimeout(() => {
+                            this.countdownOverlay.style.display = 'none';
+                            this.startBrewing();
+                        }, 1000);
+
+                        clearInterval(countdownInterval);
+                    }
+                }, 1000);
+            }
+
+            startBrewing() {
+                this.reset();
+                this.currentStepIndex = 0;
+                this.elapsedTime = 0;
+                this.isRunning = true;
+                this.startBtn.disabled = true;
+                this.pauseBtn.disabled = false;
+                this.currentStepDiv.style.display = 'block';
+                this.celebration.style.display = 'none';
+
+                this.timer = setInterval(() => {
+                    this.elapsedTime++;
+                    this.updateDisplay();
+                    this.checkSteps();
+                }, 1000);
+
+                this.updateCurrentStep();
+            }
+
+            pause() {
+                this.isPaused = true;
+                this.isRunning = false;
+                clearInterval(this.timer);
+                this.startBtn.disabled = false;
+                this.pauseBtn.disabled = true;
+            }
+
+            reset() {
+                this.isRunning = false;
+                this.isPaused = false;
+                this.currentStepIndex = 0;
+                this.elapsedTime = 0;
+                clearInterval(this.timer);
+
+                this.startBtn.disabled = false;
+                this.pauseBtn.disabled = true;
+                this.currentStepDiv.style.display = 'none';
+                this.celebration.style.display = 'none';
+                this.countdownOverlay.style.display = 'none';
+
+                this.updateDisplay();
+                this.progressFill.style.width = '0%';
+                this.updateTimelineHighlight();
+            }
+
+            updateTimeline() {
+                this.timelineBody.innerHTML = '';
+
+                this.steps.forEach((step, index) => {
+                    const row = document.createElement('tr');
+                    row.id = `timeline-step-${index}`;
+
+                    const timeCell = document.createElement('td');
+                    timeCell.className = 'time-col';
+                    const startTime = this.formatTime(step.time);
+                    const endTime = this.formatTime(step.time + step.duration);
+                    timeCell.textContent = `${startTime} - ${endTime}`;
+
+                    const actionCell = document.createElement('td');
+                    actionCell.className = 'action-col';
+                    actionCell.textContent = step.title;
+
+                    const waterCell = document.createElement('td');
+                    waterCell.className = 'water-col';
+                    waterCell.textContent = step.water > 0 ? `${step.water} g` : '-';
+
+                    const valveCell = document.createElement('td');
+                    valveCell.className = 'valve-col';
+                    valveCell.textContent = step.valve;
+                    valveCell.classList.add(step.valve === 'เปิด' ? 'valve-open' : 'valve-close');
+
+                    row.appendChild(timeCell);
+                    row.appendChild(actionCell);
+                    row.appendChild(waterCell);
+                    row.appendChild(valveCell);
+
+                    this.timelineBody.appendChild(row);
+                });
+            }
+
+            updateTimelineHighlight() {
+                // Remove all highlights
+                const allRows = this.timelineBody.querySelectorAll('tr');
+                allRows.forEach(row => {
+                    row.classList.remove('current-timeline-step', 'completed-timeline-step');
+                });
+
+                if (!this.isRunning && !this.isPaused) return;
+
+                // Highlight current and completed steps
+                this.steps.forEach((step, index) => {
+                    const row = document.getElementById(`timeline-step-${index}`);
+                    if (!row) return;
+
+                    if (this.elapsedTime >= step.time + step.duration) {
+                        // Completed step
+                        row.classList.add('completed-timeline-step');
+                    } else if (this.elapsedTime >= step.time) {
+                        // Current step
+                        row.classList.add('current-timeline-step');
+                    }
+                });
+            }
+
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            testSound() {
+                this.speak("ทดสอบเสียง ระบบเสียงทำงานปกติ", true);
+            }
+
+            updateDisplay() {
+                const minutes = Math.floor(this.elapsedTime / 60);
+                const seconds = this.elapsedTime % 60;
+                this.timerDisplay.textContent =
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // Update progress bar
+                const totalTime = 210; // 3:30 minutes
+                const progress = Math.min((this.elapsedTime / totalTime) * 100, 100);
+                this.progressFill.style.width = `${progress}%`;
+
+                // Update timeline highlight
+                this.updateTimelineHighlight();
+            }
+
+            checkSteps() {
+                const currentStep = this.steps[this.currentStepIndex];
+
+                if (currentStep && this.elapsedTime >= currentStep.time) {
+                    if (this.elapsedTime === currentStep.time) {
+                        this.announceStep(currentStep);
+                    }
+
+                    // Check if current step is finished
+                    if (this.elapsedTime >= currentStep.time + currentStep.duration) {
+                        this.currentStepIndex++;
+                        if (this.currentStepIndex < this.steps.length) {
+                            this.updateCurrentStep();
+                        } else {
+                            this.complete();
+                        }
+                    }
+                }
+            }
+
+            updateCurrentStep() {
+                if (this.currentStepIndex < this.steps.length) {
+                    const step = this.steps[this.currentStepIndex];
+                    this.stepTitle.textContent = step.title;
+                    this.stepDescription.textContent = step.description;
+                }
+            }
+
+            announceStep(step) {
+                playTickSound();
+                if (this.soundEnabled.checked) {
+                    this.speak(step.title + ": " + step.description);
+                }
+            }
+
+            speak(text, isTest = false) {
+                if (!this.soundEnabled.checked && !isTest) return;
+
+                try {
+                    // Cancel any ongoing speech
+                    if (speechSynthesis.speaking) {
+                        speechSynthesis.cancel();
+                    }
+
+                    // Wait a moment for the cancel to complete
+                    setTimeout(() => {
+                        const utterance = new SpeechSynthesisUtterance(text);
+
+                        // Try Thai first, fallback to English
+                        const voices = speechSynthesis.getVoices();
+                        const thaiVoice = voices.find(voice => voice.lang.includes('th'));
+                        const englishVoice = voices.find(voice => voice.lang.includes('en'));
+
+                        if (thaiVoice) {
+                            utterance.voice = thaiVoice;
+                            utterance.lang = 'th-TH';
+                        } else if (englishVoice) {
+                            utterance.voice = englishVoice;
+                            utterance.lang = 'en-US';
+                        } else {
+                            utterance.lang = 'en-US';
+                        }
+
+                        utterance.volume = parseFloat(this.volumeSlider.value);
+                        utterance.rate = 0.8;
+                        utterance.pitch = 1;
+
+                        // Add error handling
+                        utterance.onerror = (event) => {
+                            console.warn('Speech synthesis error:', event.error);
+                        };
+
+                        speechSynthesis.speak(utterance);
+                    }, 100);
+
+                } catch (error) {
+                    console.warn('Speech synthesis not supported:', error);
+                    // Fallback: show alert for important messages
+                    if (isTest) {
+                        alert('เสียงไม่สามารถใช้งานได้ในเบราว์เซอร์นี้');
+                    }
+                }
+            }
+
+            complete() {
+                this.isRunning = false;
+                clearInterval(this.timer);
+                this.currentStepDiv.style.display = 'none';
+                this.celebration.style.display = 'block';
+                this.startBtn.disabled = false;
+                this.pauseBtn.disabled = true;
+
+                if (this.soundEnabled.checked) {
+                    this.speak("กาแฟของคุณพร้อมดื่มแล้ว! เอ็นจอยค่ะ");
+                }
+            }
+        }
+
+        // Initialize the app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for speech synthesis to be ready
+            if ('speechSynthesis' in window) {
+                const loadVoices = () => {
+                    const voices = speechSynthesis.getVoices();
+                    if (voices.length > 0) {
+                        new CoffeeBrewingAssistant();
+                    } else {
+                        // Fallback timeout
+                        setTimeout(() => {
+                            new CoffeeBrewingAssistant();
+                        }, 1000);
+                    }
+                };
+
+                if (speechSynthesis.getVoices().length > 0) {
+                    loadVoices();
+                } else {
+                    speechSynthesis.onvoiceschanged = loadVoices;
+                }
+            } else {
+                new CoffeeBrewingAssistant();
+            }
+        });
+    </script>
+</body>
+
+</html>
